@@ -5,7 +5,8 @@ module OtterWrapper(
     output [31:0] IOBUS_OUT,
     output IOBUS_WR
 );
-    reg CLK, RST, INTR;
+    reg CLK = 0;
+    reg RST, INTR;
 
     initial forever #20 CLK = !CLK;
 
