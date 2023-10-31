@@ -3,7 +3,7 @@
 module EtoM(
     input CLK,
     input RegWriteE,
-    input [1:0] RegSrcE,
+    input [1:0] ResultSrcE,
     input MemWriteE,
     input ALUResultE,
     input RD2E,
@@ -25,7 +25,7 @@ module EtoM(
 
     always_ff @ (posedge CLK) begin
         RegWriteM <= RegWriteE;
-        RegSrcM <= ResultSrcE;
+        ResultSrcM <= ResultSrcE;
         MemWriteM <= MemWriteE;
         ALUResultM <= ALUResultE;
         WriteDataM <= RD2E;

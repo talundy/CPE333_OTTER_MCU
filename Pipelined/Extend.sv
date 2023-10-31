@@ -13,6 +13,7 @@ module Extend(
             3: ImmExt = {{20{Imm[24]}}, Imm[0], Imm[23:18], Imm[4:1], 1'b0}; // B-type
             4: ImmExt = {Imm[24:5], 12'h000}; // U-type
             5: ImmExt = {{12{Imm[24]}}, Imm[12:5], Imm[13], Imm[23:14], 1'b0}; // J-type
+            default: ImmExt = 32'd0;
         endcase
     end
 

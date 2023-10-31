@@ -2,12 +2,12 @@
 
 module FtoD(
     input CLK,
-    input InstrF,
-    input PCF,
-    input PCPlus4F,
-    output logic InstrD,
-    output logic PCD,
-    output logic PCPlus4D
+    input [31:0] InstrF,
+    input [31:0] PCF,
+    input [31:0] PCPlus4F,
+    output logic [31:0] InstrD,
+    output logic [31:0] PCD,
+    output logic [31:0] PCPlus4D
 );
 
 always_ff @ (posedge CLK) 

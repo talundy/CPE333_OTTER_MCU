@@ -28,7 +28,7 @@ module DtoE (
     output logic RD1E,
     output logic RD2E,
     output logic PCE, 
-    output logic PdE, 
+    output logic RdE, 
     output logic ImmExtE,
     output logic PCPlus4E,
     output logic MemSignE,
