@@ -4,17 +4,17 @@ module MtoW(
     input CLK,
     input RegWriteM,
     input [1:0] ResultSrcM,
-    input ALUResultM,
-    input ReadDataM,
-    input RdM,
-    input PCPlus4M,
+    input [31:0] ALUResultM,
+    input [31:0] ReadDataM,
+    input [4:0] RdM,
+    input [31:0] PCPlus4M,
 
     output logic RegWriteW,
     output logic [1:0] ResultSrcW,
-    output logic ALUResultW,
-    output logic ReadDataW,
-    output logic RdW,
-    output logic PCPlus4W 
+    output logic [31:0] ALUResultW,
+    output logic [31:0] ReadDataW,
+    output logic [4:0] RdW,
+    output logic [31:0] PCPlus4W 
 );
 
 always_ff @ (posedge CLK)
