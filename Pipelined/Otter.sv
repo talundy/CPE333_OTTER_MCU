@@ -16,16 +16,17 @@ module Otter(
     //D STAGE wires (Decode Instruction)
     wire [31:0] InstrD, PCD, PCPlus4D
     //---------------------//
-    wire RegWriteD, MemWriteD, JumpD, BranchD, ALUSrcD;
-    wire [1:0] ResultSrcD, ImmSrcD;
-    wire [2:0] ALUControlD;
+    wire RegWriteD, MemWriteD, JumpD, BranchD, ALUSrcD, MemSignD;
+    wire [1:0] ResultSrcD, MemSizeD;
+    wire [2:0] ImmSrcD;
+    wire [4:0] ALUControlD;
     wire [31:0] RD1, RD2;
     wire [31:0] ImmExtD;
 
     //E STAGE wires (Execute Instruction)
-    wire RegWriteE, MemWriteE, JumpE, BranchE, ALUSrcE;
-    wire [1:0] ResultSrcE;
-    wire [2:0] ALUControlE;
+    wire RegWriteE, MemWriteE, JumpE, BranchE, ALUSrcE, MemSignE;
+    wire [1:0] ResultSrcE, MemSizeE;
+    wire [4:0] ALUControlE;
     wire [31:0] RD1E, RD2E, PCE, ImmExtE, PCPlus4E;
     wire [4:0] RdE;
     //---------------------//
@@ -34,8 +35,8 @@ module Otter(
     wire [31:0] SrcBE, PCTargetE;
 
     //M STAGE wires (Access Data Memory)
-    wire RegWriteM, MemWriteM,
-    wire [1:0] ResultSrcM;
+    wire RegWriteM, MemWriteM, MemSignM,
+    wire [1:0] ResultSrcM, MemSizeM;
     wire [31:0] ALUResultM, WriteDataM, PCPlus4M;
     wire [4:0] RdM;
     //---------------------//
@@ -90,18 +91,18 @@ module Otter(
 
     //D STAGE modules
     ControlUnit OtterControlUnit(
-        .op(InstrD[6:0]),
-        .funct3(InstrD[14:12]),
-        .funct7(InstrD[30]),
+        .Instr(InstrD),
 
-        .RegWriteD(RegWriteD),
-        .ResultSrcD(ResultSrcD),
-        .MemWriteD(MemWriteD),
-        .JumpD(JumpD),
-        .BranchD(BranchD),
-        .ALUControlD(ALUControlD),
-        .ALUSrcD(ALUSrcD),
-        .ImmSrcD(ImmSrcD)
+        .RegWrite(RegWriteD),
+        .ResultSrc(ResultSrcD),
+        .MemWrite(MemWriteD),
+        .Jump(JumpD),
+        .Branch(BranchD),
+        .ALUControl(ALUControlD),
+        .ALUSrc(ALUSrcD),
+        .ImmSrc(ImmSrcD),
+        .MemSize(MemSizeD),
+        .MemSign(MemSignD)
     );
 
     RegisterFile OtterRegisterFile(
@@ -118,9 +119,9 @@ module Otter(
 
     Extend OtterExtend(
         .Imm(InstrD[31:7]),
-        .ImmSrcD(ImmSrcD),
+        .ImmSrc(ImmSrcD),
 
-        .ImmExtD(ImmExtD)
+        .ImmExt(ImmExtD)
     );
 
     DtoE OtterDtoE(
@@ -138,6 +139,8 @@ module Otter(
         .RdD(Instr[11:7]),
         .ImmExtD(ImmExtD),
         .PCPlus4D(PCPlus4D),
+        .MemSizeD(MemSizeD),
+        .MemSignD(MemSignD),
 
         .RegWriteE(RegWriteE),
         .ResultSrcE(ResultSrcE),
@@ -151,19 +154,21 @@ module Otter(
         .PCE(PCE),
         .RdE(RdE),
         .ImmExtE(ImmExtE),
-        .PCPlus4E(PCPlus4E)
+        .PCPlus4E(PCPlus4E),
+        .MemSizeE(MemSizeE),
+        .MemSignE(MemSignE)
     );
 
     //E STAGE modules
     assign PCSrcE = (ZeroE & BranchE) | JumpE;
 
     ALU OtterALU(
-        .SrcAE(RD1E),
-        .SrcBE(SrcBE),
-        .ALUControlE(ALUControlE),
+        .A(RD1E),
+        .B(SrcBE),
+        .Control(ALUControlE),
         
-        .ALUResultE(ALUResultE),
-        .ZeroE(ZeroE)
+        .Result(ALUResultE),
+        .Zero(ZeroE)
     );
 
     Mux2 OtterALUMux(
@@ -190,6 +195,8 @@ module Otter(
         .RD2E(RD2E), //WriteDataE
         .RdE(RdE),
         .PCPlus4E(PCPlus4E),
+        .MemSizeE(MemSizeE),
+        .MemSignE(MemSignE),
 
         .RegWriteM(RegWriteM),
         .ResultSrcM(ResultSrcM),
@@ -198,21 +205,29 @@ module Otter(
         .WriteDataM(WriteDataM),
         .RdM(RdM),
         .PCPlus4M(PCPlus4M)
+        .MemSizeM(MemSizeM),
+        .MemSignM(MemSignM)
     );
 
     //M STAGE modules
     Memory OtterMemory(
         //Instructions
-        .PCF(PCF), //Address
+        .MEM_ADDR1(PCF), //Address
         
-        .InstrF(InstrF), //Data at Address
+        .MEM_DOUT1(InstrF), //Data at Address
         //Data
-        .CLK(CLK),
-        .A(ALUResultM), //Address
-        .WD(WriteDataM), //Data to Write
-        .WE(MemWriteM), //Write enable
+        .MEM_CLK(CLK),
+        .MEM_ADDR2(ALUResultM), //Address
+        .MEM_DIN2(WriteDataM), //Data to Write
+        .MEM_WRITE2(MemWriteM), //Write enable
         
-        .RD(ReadDataM) //Data at Address
+        .MEM_DOUT2(ReadDataM) //Data at Address
+        .MEM_SIZE(MemSizeM),
+        .MEM_SIGN(MemSignM),
+        //not using right now
+        .MEM_READ1(1),
+        .MEM_READ2(1),
+        .IO_IN(32'd0)
     );
 
     MtoW OtterMtoW(
