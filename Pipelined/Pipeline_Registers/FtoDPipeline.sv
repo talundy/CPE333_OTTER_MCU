@@ -1,6 +1,6 @@
 `timescale 1ps/1ps
 
-module FtoDPipeline (
+module FtoD(
     input CLK,
     input InstrF,
     input PCF,

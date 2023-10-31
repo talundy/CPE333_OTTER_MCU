@@ -22,16 +22,16 @@
 
 module ControlUnit(
     input [31:0] Instr,
-    output RegWrite,
-    output [1:0] ResultSrc,
-    output MemWrite,
-    output [1:0] MemSize,
-    output MemSign,
-    output Jump,
-    output Branch,
-    output [4:0] ALUControl,
-    output ALUSrc,
-    output [2:0] ImmSrc
+    output logic RegWrite,
+    output logic [1:0] ResultSrc,
+    output logic MemWrite,
+    output logic [1:0] MemSize,
+    output logic MemSign,
+    output logic Jump,
+    output logic Branch,
+    output logic [4:0] ALUControl,
+    output logic ALUSrc,
+    output logic [2:0] ImmSrc
 );
 
     wire [6:0] Opcode = Instr[6:0];
@@ -61,7 +61,7 @@ module ControlUnit(
             7'b0110111,
             7'b0010111: ImmSrc = 3'd4; // U-type
             7'b1101111: ImmSrc = 3'd5; // J-type
-            default: ImmSrc = 3'd0
+            default: ImmSrc = 3'd0;
         endcase
         case(Opcode)
             7'b0000011: ResultSrc = 2'd1; // Load instructions

@@ -1,9 +1,11 @@
 `timescale 1ns / 1ps
 
 module ALU(
-    input [4:0] Control;  //branch,func7[5],func3
-    input [31:0] A,B;
-    output logic [31:0] Result; 
+    input [4:0] Control,  //branch,func7[5],func3
+    input [31:0] A,
+    input [31:0] B,
+    output logic Zero,
+    output logic [31:0] Result
 );
         
        

@@ -1,6 +1,6 @@
 `timescale 1ps/1ps
 
-module EtoMPipeline(
+module EtoM(
     input CLK,
     input RegWriteE,
     input [1:0] RegSrcE,

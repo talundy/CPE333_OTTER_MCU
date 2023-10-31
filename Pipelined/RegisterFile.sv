@@ -10,7 +10,7 @@ module RegisterFile(
     input [4:0] A3,     //register address to write to
 
     output logic [31:0] RD1,
-    output logic [31:0] RD2,
+    output logic [31:0] RD2
 );
 
 

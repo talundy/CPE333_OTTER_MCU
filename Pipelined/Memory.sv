@@ -2,22 +2,22 @@
 
                                                                                                                                 //func3
  module Memory(
-    input [31:0] MEM_ADDR1;     //Instruction Memory Port
-    input [31:0] MEM_ADDR2;     //Data Memory Port
-    input MEM_CLK;
-    input [31:0] MEM_DIN2;
-    input MEM_WRITE2;
-    input MEM_READ1; // not using read enables right now
-    input MEM_READ2;
+    input [31:0] MEM_ADDR1,     //Instruction Memory Port
+    input [31:0] MEM_ADDR2,     //Data Memory Port
+    input MEM_CLK,
+    input [31:0] MEM_DIN2,
+    input MEM_WRITE2,
+    input MEM_READ1, // not using read enables right now
+    input MEM_READ2,
     //input [1:0] MEM_BYTE_EN1;
     //input [1:0] MEM_BYTE_EN2;
-    input [31:0] IO_IN; // not using io right now
-    output ERR;
-    input [1:0] MEM_SIZE;
-    input MEM_SIGN;
-    output logic [31:0] MEM_DOUT1;
-    output logic [31:0] MEM_DOUT2;
-    output logic IO_WR; // not using io right now
+    input [31:0] IO_IN, // not using io right now
+    output ERR,
+    input [1:0] MEM_SIZE,
+    input MEM_SIGN,
+    output logic [31:0] MEM_DOUT1,
+    output logic [31:0] MEM_DOUT2,
+    output logic IO_WR // not using io right now
  );
     parameter ACTUAL_WIDTH=14;  //64KB     16K x 32
     parameter NUM_COL = 4;

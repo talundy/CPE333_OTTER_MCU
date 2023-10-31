@@ -1,6 +1,6 @@
 `timescale 1ps/1ps
 
-module DtoEPipeline (
+module DtoE (
     input CLK,
     input RegWriteD, 
     input [1:0] ResultSrcD,
@@ -30,7 +30,7 @@ module DtoEPipeline (
     output logic PCE, 
     output logic PdE, 
     output logic ImmExtE,
-    output logic PCPlus4E
+    output logic PCPlus4E,
     output logic MemSignE,
     output logic [1:0] MemSizeE
 

@@ -1,6 +1,6 @@
 `timescale 1ps/1ps
 
-module MtoPipeline(
+module MtoW(
     input CLK,
     input RegWriteM,
     input [1:0] ResultSrcM,

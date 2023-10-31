@@ -14,7 +14,7 @@ module Otter(
     wire [31:0] PCFPrime, PCF, PCPlus4F, InstrF;
 
     //D STAGE wires (Decode Instruction)
-    wire [31:0] InstrD, PCD, PCPlus4D
+    wire [31:0] InstrD, PCD, PCPlus4D;
     //---------------------//
     wire RegWriteD, MemWriteD, JumpD, BranchD, ALUSrcD, MemSignD;
     wire [1:0] ResultSrcD, MemSizeD;
@@ -35,7 +35,7 @@ module Otter(
     wire [31:0] SrcBE, PCTargetE;
 
     //M STAGE wires (Access Data Memory)
-    wire RegWriteM, MemWriteM, MemSignM,
+    wire RegWriteM, MemWriteM, MemSignM;
     wire [1:0] ResultSrcM, MemSizeM;
     wire [31:0] ALUResultM, WriteDataM, PCPlus4M;
     wire [4:0] RdM;
@@ -136,7 +136,7 @@ module Otter(
         .RD1(RD1),
         .RD2(RD2),
         .PCD(PCD),
-        .RdD(Instr[11:7]),
+        .RdD(InstrD[11:7]),
         .ImmExtD(ImmExtD),
         .PCPlus4D(PCPlus4D),
         .MemSizeD(MemSizeD),
@@ -204,7 +204,7 @@ module Otter(
         .ALUResultM(ALUResultM),
         .WriteDataM(WriteDataM),
         .RdM(RdM),
-        .PCPlus4M(PCPlus4M)
+        .PCPlus4M(PCPlus4M),
         .MemSizeM(MemSizeM),
         .MemSignM(MemSignM)
     );
@@ -221,7 +221,7 @@ module Otter(
         .MEM_DIN2(WriteDataM), //Data to Write
         .MEM_WRITE2(MemWriteM), //Write enable
         
-        .MEM_DOUT2(ReadDataM) //Data at Address
+        .MEM_DOUT2(ReadDataM), //Data at Address
         .MEM_SIZE(MemSizeM),
         .MEM_SIGN(MemSignM),
         //not using right now
