@@ -71,10 +71,10 @@ module ControlUnit(
             default: ResultSrc = 2'd0;
         endcase
         case(Opcode)
-            7'b0110111: ALUSrc = 5'b01001; //lui
+            7'b0110111: ALUControl = 5'b01001; //lui
             7'b0000011,
-            7'b0100011: ALUSrc = 5'b00000; //load or store, add
-            default: ALUSrc = {Branch, Instr[30], Instr[14:12]};
+            7'b0100011: ALUControl = 5'b00000; //load or store, add
+            default: ALUControl = {Branch, Instr[30], Instr[14:12]};
         endcase
     end
 

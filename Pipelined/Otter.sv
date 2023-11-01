@@ -74,9 +74,11 @@ module Otter(
         .Result(PCPlus4F)
     );
 
-    //
-    // DO INSTRUCTION MEMORY and DATA MEMORY at the SAME TIME
-    //
+    InstrMemory OtterInstrMemory(
+        .MEM_READ(1'b1),
+        .MEM_ADDR(PCF),
+        .MEM_DOUT(InstrF)
+    );
 
     FtoD OtterFtoD(
         .CLK(CLK),
@@ -209,13 +211,9 @@ module Otter(
         .MemSignM(MemSignM)
     );
 
+    
     //M STAGE modules
-    Memory OtterMemory(
-        //Instructions
-        .MEM_ADDR1(PCF), //Address
-        
-        .MEM_DOUT1(InstrF), //Data at Address
-        //Data
+    DataMemory OtterDataMemory(
         .MEM_CLK(CLK),
         .MEM_ADDR2(ALUResultM), //Address
         .MEM_DIN2(WriteDataM), //Data to Write
@@ -225,8 +223,7 @@ module Otter(
         .MEM_SIZE(MemSizeM),
         .MEM_SIGN(MemSignM),
         //not using right now
-        .MEM_READ1(1),
-        .MEM_READ2(1),
+        .MEM_READ2(~MemWriteM),
         .IO_IN(32'd0)
     );
 
