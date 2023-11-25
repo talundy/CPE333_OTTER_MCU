@@ -6,7 +6,7 @@ module EtoM(
     input [1:0] ResultSrcE,
     input MemWriteE,
     input [31:0] ALUResultE,
-    input [31:0] RD2E,
+    input [31:0] WriteDataE,
     input [4:0] RdE,
     input [31:0] PCPlus4E,
     input [1:0] MemSizeE,
@@ -28,7 +28,7 @@ module EtoM(
         ResultSrcM <= ResultSrcE;
         MemWriteM <= MemWriteE;
         ALUResultM <= ALUResultE;
-        WriteDataM <= RD2E;
+        WriteDataM <= WriteDataE;
         RdM <= RdE;
         PCPlus4M <= PCPlus4E;
         MemSizeM <= MemSizeE;

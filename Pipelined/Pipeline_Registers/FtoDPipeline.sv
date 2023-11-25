@@ -2,6 +2,8 @@
 
 module FtoD(
     input CLK,
+    input EN,
+    input CLR,
     input [31:0] InstrF,
     input [31:0] PCF,
     input [31:0] PCPlus4F,
@@ -10,10 +12,14 @@ module FtoD(
     output logic [31:0] PCPlus4D
 );
 
-always_ff @ (posedge CLK) 
-    begin
-        InstrD <= InstrF;
-        PCD <= PCF;
-        PCPlus4D <= PCPlus4F;
+    always_ff @ (posedge CLK) begin
+        if (EN) begin
+            if (CLR)
+                InstrD <= 32'h00000013; //The NOP instruction
+            else
+                InstrD <= InstrF;
+            PCD <= PCF;
+            PCPlus4D <= PCPlus4F;
+        end
     end    
 endmodule

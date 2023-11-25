@@ -1,5 +1,7 @@
 `timescale 1ns / 1ps
-
+//Engineer: Thomas Choboter
+//24 November 2023
+//This module represents a pipelined processor implementing the RISC-V ISA
 module Otter(
     input [31:0] IOBUS_IN,
     input RST,
@@ -12,11 +14,12 @@ module Otter(
 
     //F STAGE wires (Fetch Instruction)
     wire [31:0] PCFPrime, PCF, PCPlus4F, InstrF;
+    wire StallF;
 
     //D STAGE wires (Decode Instruction)
     wire [31:0] InstrD, PCD, PCPlus4D;
     //---------------------//
-    wire RegWriteD, MemWriteD, JumpD, BranchD, ALUSrcD, MemSignD;
+    wire RegWriteD, MemWriteD, JumpD, BranchD, ALUSrcD, MemSignD, StallD, FlushD;
     wire [1:0] ResultSrcD, MemSizeD;
     wire [2:0] ImmSrcD;
     wire [4:0] ALUControlD;
@@ -28,11 +31,12 @@ module Otter(
     wire [1:0] ResultSrcE, MemSizeE;
     wire [4:0] ALUControlE;
     wire [31:0] RD1E, RD2E, PCE, ImmExtE, PCPlus4E;
-    wire [4:0] RdE;
+    wire [4:0] Rs1E, Rs2E, RdE;
     //---------------------//
     wire [31:0] ALUResultE;
-    wire ZeroE, PCSrcE;
-    wire [31:0] SrcBE, PCTargetE;
+    wire ZeroE, PCSrcE, FlushE;
+    wire [31:0] SrcAE, SrcBE, PCTargetE, WriteDataE;
+    wire [1:0] ForwardAE, ForwardBE;
 
     //M STAGE wires (Access Data Memory)
     wire RegWriteM, MemWriteM, MemSignM;
@@ -138,6 +142,8 @@ module Otter(
         .RD1(RD1),
         .RD2(RD2),
         .PCD(PCD),
+        .Rs1D(InstrD[19:15]),
+        .Rs2D(InstrD[24:20]),
         .RdD(InstrD[11:7]),
         .ImmExtD(ImmExtD),
         .PCPlus4D(PCPlus4D),
@@ -154,6 +160,8 @@ module Otter(
         .RD1E(RD1E),
         .RD2E(RD2E),
         .PCE(PCE),
+        .Rs1E(Rs1E),
+        .Rs2E(Rs2E),
         .RdE(RdE),
         .ImmExtE(ImmExtE),
         .PCPlus4E(PCPlus4E),
@@ -165,7 +173,7 @@ module Otter(
     assign PCSrcE = (ZeroE & BranchE) | JumpE;
 
     ALU OtterALU(
-        .A(RD1E),
+        .A(SrcAE),
         .B(SrcBE),
         .Control(ALUControlE),
         
@@ -173,9 +181,27 @@ module Otter(
         .Zero(ZeroE)
     );
 
+    Mux4 OtterAForwardMux(
+        .Src(ForwardAE),
+        .Arg0(RD1E),
+        .Arg1(ResultW),
+        .Arg2(ALUResultM),
+
+        .Result(SrcAE)
+    );
+
+    Mux4 OtterBForwardMux(
+        .Src(ForwardBE),
+        .Arg0(RD2E),
+        .Arg1(ResultW),
+        .Arg2(ALUResultM),
+
+        .Result(WriteDataE)
+    );
+
     Mux2 OtterALUMux(
         .Src(ALUSrcE),
-        .Arg0(RD2E),
+        .Arg0(WriteDataE),
         .Arg1(ImmExtE),
 
         .Result(SrcBE)
@@ -194,7 +220,7 @@ module Otter(
         .ResultSrcE(ResultSrcE),
         .MemWriteE(MemWriteE),
         .ALUResultE(ALUResultE),
-        .RD2E(RD2E), //WriteDataE
+        .WriteDataE(WriteDataE),
         .RdE(RdE),
         .PCPlus4E(PCPlus4E),
         .MemSizeE(MemSizeE),
@@ -253,6 +279,28 @@ module Otter(
         //No Arg3 (for now)
 
         .Result(ResultW)
+    );
+
+    //modules external to the pipeline
+    HazardUnit OtterHazardUnit(
+        .Rs1D(Rs1D),
+        .Rs2D(Rs2D),
+        .RdE(RdE),
+        .Rs1E(Rs1E),
+        .Rs2E(Rs2E),
+        .PCSrcE(PCSrcE),
+        .ResultSrcE0(ResultSrcE[0]),
+        .RdM(RdM),
+        .RegWriteM(RegWriteM),
+        .RdW(RdW),
+        .RegWriteW(RegWriteW),
+
+        .StallF(StallF),
+        .StallD(StallD),
+        .FlushD(FlushD),
+        .FlushE(FlushE),
+        .ForwardAE(ForwardAE),
+        .ForwardBE(ForwardBE)
     );
 
 endmodule

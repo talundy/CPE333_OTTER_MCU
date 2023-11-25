@@ -2,6 +2,7 @@
 
 module DtoE (
     input CLK,
+    input CLR,
     input RegWriteD, 
     input [1:0] ResultSrcD,
     input MemWriteD,
@@ -12,6 +13,8 @@ module DtoE (
     input [31:0] RD1,
     input [31:0] RD2, 
     input [31:0] PCD, 
+    input [4:0] Rs1D,
+    input [4:0] Rs2D,
     input [4:0] RdD, 
     input [31:0] ImmExtD, 
     input [31:0] PCPlus4D,
@@ -28,6 +31,8 @@ module DtoE (
     output logic [31:0] RD1E,
     output logic [31:0] RD2E,
     output logic [31:0] PCE, 
+    output logic [4:0] Rs1E,
+    output logic [4:0] Rs2E,
     output logic [4:0] RdE, 
     output logic [31:0] ImmExtE,
     output logic [31:0] PCPlus4E,
@@ -37,19 +42,38 @@ module DtoE (
 ); 
 
     always_ff @ (posedge CLK) begin
-        RegWriteE <= RegWriteD;
-        ResultSrcE <= ResultSrcD;
-        MemWriteE <= MemWriteD;
-        JumpE <= JumpD;
-        BranchE <= BranchD;
-        ALUControlE <= ALUControlD;
-        ALUSrcE <= ALUSrcD;
-        RD1E <= RD1;
-        RD2E <= RD2;
+        if (CLR) begin
+            RegWriteE <= 0;
+            ResultSrcE <= '0;
+            MemWriteE <= 0;
+            JumpE <= 0;
+            BranchE <= 0;
+            ALUControlE <= '0;
+            ALUSrcE <= 0;
+            RD1E <= '0;
+            RD2E <= '0;
+            Rs1E <= '0;
+            Rs2E <= '0;
+            RdE <= '0;
+            ImmExtE <= '0;
+        end
+        else begin
+            RegWriteE <= RegWriteD;
+            ResultSrcE <= ResultSrcD;
+            MemWriteE <= MemWriteD;
+            JumpE <= JumpD;
+            BranchE <= BranchD;
+            ALUControlE <= ALUControlD;
+            ALUSrcE <= ALUSrcD;
+            RD1E <= RD1;
+            RD2E <= RD2;
+            Rs1E <= Rs1D;
+            Rs2E <= Rs2D;
+            RdE <= RdD;
+            ImmExtE <= ImmExtD;
+        end
         PCE <= PCD;
-        RdE <= RdD;
-        ImmExtE <= ImmExtD;
-        PCPlus4E <= PCPlus4D;    
+        PCPlus4E <= PCPlus4D;
         MemSignE <= MemSignD;
         MemSizeE <= MemSizeD;
     end
