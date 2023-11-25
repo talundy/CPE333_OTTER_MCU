@@ -1,24 +1,5 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: J. Callenes
-// 
-// Create Date: 01/27/2019 09:22:55 AM
-// Design Name: 
-// Module Name: CU_Decoder
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
-//`include "opcodes.svh"
+
 
 module ControlUnit(
     input [31:0] Instr,
